@@ -1,52 +1,58 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback } from "react";
+
 /**
  * Renders an array of strings passed in that can be filtered and added to as an
  * unordered list.
  * @returns Component
  */
-export default function Sidebar() {
-  let [newMenuItem, setNewMenuItem] = useState("")
-  // TODO: 2 Using a state hook, maintain the current menu items as an array state.
-  // let [menuItems, setMenuItems] = useState(initialMenuItems)
-  let [filter, setFilter] = useState("")
-  // Adds a single string passed in as parameter to the state element
-  // "menuItems" that holds the set of current menu items.
-  let addMenuItem = useCallback(() => {
-    console.log("Added menu item")
-    //   // TODO: 3. Add a new menu item to the correct variable associated with this class.
-    //   // This involves adding a parameter and changing a class instance variable (props).
-    //   setMenuItems([item, ...menuItems])
-  }, [])
+export default function Sidebar({ initialMenuItems }) {
+  // TODO 2: Maintain menu state
+  const [menuItems, setMenuItems] = useState(initialMenuItems); // initialize state to maintain the current menu items
+  const [newMenuItem, setNewMenuItem] = useState(""); // state to hold the value of the new menu item input
+  const [filter, setFilter] = useState("");   // state to hold the filter input value
 
-  // TODO: 4. Display ONLY the menu items that contain the filter element value
-  // "term" in them. Each menu item should be an unordered list item wrapped in an unordered list (ul) element.
+  //    TODO 2: Implement a new menu item (AddMenuItem callback)
+  const addMenuItem = useCallback(() => { // callback to add a new menu item to the list
+    if (newMenuItem.trim() !== "") { // checks if the input is not empty
+      setMenuItems((prevItems) => [...prevItems, newMenuItem]);   // update the menu items state by adding the new item
+      setNewMenuItem(""); // clear input after adding 
+    }
+  }, [newMenuItem]);
 
-  // TODO: 1 Render inside the outer div an unordered list of the menu items, with each string in the array
-  // its own item.
+  // TODO 4: Filter menu items, case-insensitive
+  const filteredItems = menuItems.filter((item) =>
+    item.toLowerCase().includes(filter.toLowerCase())
+  );
+
   return (
     <div>
+      {/* Input to add new menu items */}
       <input
         type="text"
         id="newMenuItemValue"
         value={newMenuItem}
         onChange={(event) => setNewMenuItem(event.target.value)}
-      ></input>
+        placeholder="Enter a menu item"
+      />
       <br />
-      <button
-        onClick={() => {
-          /* TODO: 3 */
-        }}
-      >
-        Add Item
-      </button>
+      <button onClick={addMenuItem}>Add Item</button>
       <br />
+
+      {/* Input to filter menu items */}
       <input
         id="filter"
         type="text"
         value={filter}
         onChange={(event) => setFilter(event.target.value)}
         placeholder="Filter by..."
-      ></input>
+      />
+
+      {/* TODO 1: Render filtered list of menu items */}
+      <ul>
+        {filteredItems.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
     </div>
-  )
+  );
 }
